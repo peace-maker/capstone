@@ -81,33 +81,30 @@ jobs:
     - name: make
       if: startsWith(matrix.config.build-system, 'make')
       run: |
-        ./make.sh;
-        make check;
+        ./make.sh
+        make check
         sudo make install
         cp libcapstone.so.* libcapstone.so
 
     - name: cmake
       if: startsWith(matrix.config.build-system, 'cmake')
       run: |
-        mkdir build && cd build;
-        cmake -DCAPSTONE_INSTALL=1 -DBUILD_SHARED_LIBS=1 -DCMAKE_INSTALL_PREFIX=/usr ..;
-        sudo cmake --build . --config Release --target install;
-        cp libcapstone.* ../;
-        cp libcapstone.* ../tests/;
-        cp test_* ../tests/;
+        mkdir build && cd build
+        # build static library
+        cmake -DCAPSTONE_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/usr ..
+        cmake --build . --config Release
+        # build shared library
+        cmake -DCAPSTONE_INSTALL=1 -DBUILD_SHARED_LIBS=1 -DCMAKE_INSTALL_PREFIX=/usr ..
+        sudo cmake --build . --config Release --target install
+        cp libcapstone.* ../
+        cp libcapstone.* ../tests/
+        cp test_* ../tests/
 
     - name: cstest
       run: |
         cd suite/cstest && ./build_cstest.sh
         python cstest_report.py -D -t build/cstest -d ../MC
         python cstest_report.py -D -t build/cstest -f issues.cs; cd ..
-
-    - name: build python binding
-      run: |
-        mkdir -p bindings/python/capstone/lib && cp libcapstone.so.5.* bindings/python/capstone/lib/libcapstone.so;
-        cd bindings/python;
-        make && make check ; 
-        cd ../..;
 
     - name: run python binding test
       run: |
