@@ -148,6 +148,9 @@ typedef enum PredBlockMask {
 inline static const char *ARMVPTPredToString(ARMVCC_VPTCodes CC)
 {
   switch (CC) {
+  default:
+    assert(0 && "Unknown VPT code");
+    break;
   case ARMVCC_None:
     return "none";
   case ARMVCC_Then:
@@ -155,7 +158,7 @@ inline static const char *ARMVPTPredToString(ARMVCC_VPTCodes CC)
   case ARMVCC_Else:
     return "e";
   }
-  assert(0 && "Unknown VPT code");
+  return NULL;
 }
 
 inline static unsigned ARMVectorCondCodeFromString(const char CC)

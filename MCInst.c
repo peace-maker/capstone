@@ -279,9 +279,9 @@ uint64_t MCInst_getOpVal(MCInst *MI, unsigned OpNum)
 		return MCOperand_getReg(op);
 	else if (MCOperand_isImm(op))
 		return MCOperand_getImm(op);
-	else
-		assert(0 && "Operand type not handled in this getter.");
-		return false;
+
+	assert(0 && "Operand type not handled in this getter.");
+	return false;
 }
 
 void MCInst_setIsAlias(MCInst *MI, bool Flag) {
