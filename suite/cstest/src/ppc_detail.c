@@ -58,35 +58,43 @@ char *get_detail_ppc(csh *handle, cs_mode mode, cs_insn *ins)
 				add_str(&result, " ; operands[%u].type: MEM", i);
 				if (op->mem.base != PPC_REG_INVALID)
 					add_str(&result, " ; operands[%u].mem.base: REG = %s", i, cs_reg_name(*handle, op->mem.base));
+				if (op->mem.offset != PPC_REG_INVALID)
+					add_str(&result, " ; operands[%u].mem.offset: REG = %s", i, cs_reg_name(*handle, op->mem.offset));
 				if (op->mem.disp != 0)
 					add_str(&result, " ; operands[%u].mem.disp: 0x%x", i, op->mem.disp);
 
+				break;
+		}
+
+		switch(op->access) {
+			default:
+				break;
+			case CS_AC_READ:
+				add_str(&result, " ; operands[%u].access: READ", i);
+				break;
+			case CS_AC_WRITE:
+				add_str(&result, " ; operands[%u].access: WRITE", i);
+				break;
+			case CS_AC_READ_WRTE:
+				add_str(&result, " ; operands[%u].access: READ | WRITE", i);
 				break;
 		}
 	}
 
 	if (ppc->bc.pred_cr != PPC_PRED_INVALID ||
 			ppc->bc.pred_ctr != PPC_PRED_INVALID) {
-		printf("\tBranch:\n");
-		printf("\t\tbi: %u\n", ppc->bc.bi);
-		printf("\t\tbo: %u\n", ppc->bc.bo);
+		add_str(&result, " ; Branch ; bi: %u ; bo: %u", ppc->bc.bi, ppc->bc.bo);
 		if (ppc->bc.bh != PPC_BH_INVALID)
-			printf("\t\tbh: %u\n", ppc->bc.bh);
+			add_str(&result, " ; bh: %u", ppc->bc.bh);
 		if (ppc->bc.pred_cr != PPC_PRED_INVALID) {
-			printf("\t\tcrX: %s\n", cs_reg_name(*handle, ppc->bc.crX));
-			printf("\t\tpred CR-bit: %s\n", get_pred_name(ppc->bc.pred_cr));
+			add_str(&result, " ; crX: %s", cs_reg_name(*handle, ppc->bc.crX));
+			add_str(&result, " ; pred CR-bit: %s", get_pred_name(ppc->bc.pred_cr));
 		}
 		if (ppc->bc.pred_ctr != PPC_PRED_INVALID)
-			printf("\t\tpred CTR: %s\n", get_pred_name(ppc->bc.pred_ctr));
-		if (ppc->bc.hint != PPC_BH_INVALID)
-			printf("\t\thint: %u\n", ppc->bc.hint);
+			add_str(&result, " ; pred CTR: %s", get_pred_name(ppc->bc.pred_ctr));
+		if (ppc->bc.hint != PPC_BR_NOT_GIVEN)
+			add_str(&result, " ; hint: %u", ppc->bc.hint);
 	}
-
-	if (ppc->bc.hint != PPC_BR_NOT_GIVEN)
-		printf("\tBranch hint: %u\n", ppc->bc.hint);
-
-	if (ppc->bc.hint != PPC_BR_NOT_GIVEN)
-		add_str(&result, " ; Branch hint: %u", ppc->bc.hint);
 
 	if (ppc->update_cr0)
 		add_str(&result, " ; Update-CR0: True");
