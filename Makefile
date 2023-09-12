@@ -58,7 +58,7 @@ ifneq ($(OS),OS/390)
 CFLAGS += -fPIC
 endif
 else
-CFLAGS += -fPIC -Wall -Wwrite-strings -Wmissing-prototypes -Iinclude
+CFLAGS += -fPIC -Werror -Wall -Iinclude
 endif
 
 ifeq ($(CAPSTONE_USE_SYS_DYN_MEM),yes)

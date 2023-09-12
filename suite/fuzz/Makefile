@@ -22,7 +22,7 @@ OBJDIR = $(BUILDDIR)/obj/tests
 LIBDIR = $(BUILDDIR)
 endif
 
-CFLAGS += -Wall -I$(INCDIR)
+CFLAGS += -Werror -Wall -I$(INCDIR)
 LDFLAGS += -L$(LIBDIR)
 
 CFLAGS += $(foreach arch,$(LIBARCHS),-arch $(arch))
